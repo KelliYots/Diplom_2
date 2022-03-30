@@ -1,13 +1,13 @@
-package stellar_burgers_tests;
+package stellarburgers.tests;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import stellar_burgers.OrdersAndIngredientsRequestClient;
-import stellar_burgers.User;
-import stellar_burgers.UserRequestClient;
+import stellarburgers.OrdersAndIngredientsRequestClient;
+import stellarburgers.User;
+import stellarburgers.UserRequestClient;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -30,7 +30,7 @@ public class OrderTests {
     }
 
     @Test
-    @DisplayName("Creating an order with authorization")
+    @DisplayName("Создание заказа с авторизацией")
     @Description("Создание заказа с авторизацией, возвращает 200 ОК")
     public void creatingOrderWithAuthorization() {
         testRequestClient.userUniqueRegistration();
@@ -39,15 +39,15 @@ public class OrderTests {
         testOrdersAndIngredientsClient.getOrderResponse()
                 .then()
                 .assertThat()
+                .statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .and()
-                .body("name", notNullValue())
-                .and()
-                .statusCode(SC_OK);
+                .body("name", notNullValue());
+
     }
 
     @Test
-    @DisplayName("Creating order without authorization")
+    @DisplayName("Создание заказа без авторизации")
     @Description("Создание заказа без авторизации, возвращает 401 Unauthorized")
     public void creatingOrderUnauth() {
         testRequestClient.userUniqueRegistration();
@@ -55,13 +55,12 @@ public class OrderTests {
         testOrdersAndIngredientsClient.getOrderResponse()
                 .then()
                 .assertThat()
-                .body("success", equalTo(false))
-                .and()
-                .statusCode(SC_UNAUTHORIZED);
+                .statusCode(SC_UNAUTHORIZED)
+                .body("success", equalTo(false));
     }
 
     @Test
-    @DisplayName("Creating order without ingredients")
+    @DisplayName("Создание заказа без ингредиентов")
     @Description("Создание заказа без ингредиентов, возвращает 400 Bad Request")
     public void orderCreationWithoutIngredient() {
         testRequestClient.userUniqueRegistration();
@@ -70,13 +69,12 @@ public class OrderTests {
         testOrdersAndIngredientsClient.getOrderResponse()
                 .then()
                 .assertThat()
-                .body("message", equalTo("Ingredient ids must be provided"))
-                .and()
-                .statusCode(SC_BAD_REQUEST);
+                .statusCode(SC_BAD_REQUEST)
+                .body("message", equalTo("Ingredient ids must be provided"));
     }
 
     @Test
-    @DisplayName("Creating an order with an incorrect hash of ingredients")
+    @DisplayName("Создание заказа с неверным хешем ингредиентов")
     @Description("Создание заказа с неверным хешем ингредиентов, возвращает 500 Internal Server Error")
     public void orderCreationWithInvalidIngredientHash() {
         testRequestClient.userUniqueRegistration();
@@ -89,7 +87,7 @@ public class OrderTests {
     }
 
     @Test
-    @DisplayName("Receiving orders from a specific authorized user")
+    @DisplayName("Получение заказов авторизованного пользователя")
     @Description("Получение заказов конкретного авторизованного пользователя, возвращает 200 ОК")
     public void getOrdersByAuthorizedUser() {
         testRequestClient.userUniqueRegistration();
@@ -99,25 +97,23 @@ public class OrderTests {
         testOrdersAndIngredientsClient.getOrderResponse()
                 .then()
                 .assertThat()
+                .statusCode(SC_OK)
                 .body("success", equalTo(true))
                 .and()
-                .body("orders", notNullValue())
-                .and()
-                .statusCode(SC_OK);
+                .body("orders", notNullValue());
     }
 
     @Test
-    @DisplayName("Receiving orders from a specific unauthorized user")
+    @DisplayName("Получение заказов неавторизованного пользователя")
     @Description("Получение заказов конкретного неавторизованного пользователя, возвращает 401 Unauthorized")
     public void getOrdersByUnauthorizedUser() {
         testOrdersAndIngredientsClient.getOrderUnauth();
         testOrdersAndIngredientsClient.getOrderResponse()
                 .then()
                 .assertThat()
+                .statusCode(SC_UNAUTHORIZED)
                 .body("success", equalTo(false))
                 .and()
-                .body("message", equalTo("You should be authorised"))
-                .and()
-                .statusCode(SC_UNAUTHORIZED);
+                .body("message", equalTo("You should be authorised"));
     }
 }
