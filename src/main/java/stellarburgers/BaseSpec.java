@@ -1,4 +1,4 @@
-package stellar_burgers;
+package stellarburgers;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;

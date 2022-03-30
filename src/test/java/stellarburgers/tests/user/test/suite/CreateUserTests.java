@@ -1,14 +1,13 @@
-package stellar_burgers_tests.user_test_suite;
+package stellarburgers.tests.user.test.suite;
 
-import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import stellar_burgers.BaseSpec;
-import stellar_burgers.User;
-import stellar_burgers.UserRequestClient;
+import stellarburgers.BaseSpec;
+import stellarburgers.User;
+import stellarburgers.UserRequestClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,48 +21,44 @@ public class CreateUserTests {
     UserRequestClient testRequestClient = new UserRequestClient();
     User testUser = new User();
 
-    @Step
     @Before
     public void setUp() {
         testUser.createFuckerUser();
     }
 
-    @Step
     @After
     public void tearDown() {
         testRequestClient.delete();
     }
 
     @Test
-    @DisplayName("Registration a unique user")
-    @Description("Register a new unique profile returns 200 OK")
+    @DisplayName("Регистрация нового уникального пользователя")
+    @Description("Регистрация нового уникального пользователя, возвращает 200 OK")
     public void userCreationIsPossible() {
         testRequestClient.userUniqueRegistration();
         testRequestClient.getResponse()
                 .then()
                 .assertThat()
-                .body("success", equalTo(true))
-                .and()
-                .statusCode(SC_OK);
+                .statusCode(SC_OK)
+                .body("success", equalTo(true));
     }
 
     @Test
-    @DisplayName("Register doppelganger user")
-    @Description("Register two users with the same data")
+    @DisplayName("Регистрация пользователя-допельгангера")
+    @Description("Регистрация двух пользователей с одинаковыми данными, возвращает 403 Forbidden")
     public void registerDoppelgangerUser() {
         testRequestClient.userUniqueRegistration();
         testRequestClient.userUniqueRegistration();
         testRequestClient.getResponse()
                 .then()
                 .assertThat()
-                .body("success", equalTo(false))
-                .and()
-                .statusCode(SC_FORBIDDEN);
+                .statusCode(SC_FORBIDDEN)
+                .body("success", equalTo(false));
     }
 
     @Test
     @DisplayName("")
-    @Description("")
+    @Description("Регистрация пользователя без email невозможгна, возвращает 403 Forbidden")
     public void userCreationWithoutEmailNotPossible() {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("password", testUser.getPassword());
@@ -74,15 +69,15 @@ public class CreateUserTests {
                 .when()
                 .post("auth/register"));
         testRequestClient.getResponse()
-                .then().assertThat()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .and()
-                .statusCode(SC_FORBIDDEN);
+                .then()
+                .assertThat()
+                .statusCode(SC_FORBIDDEN)
+                .body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
     @DisplayName("")
-    @Description("")
+    @Description("Регистрация пользователя без пароля невозможна, возвращает 403 Forbidden")
     public void userCreationWithoutPasswordNotPossible() {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("password", testUser.getEmail());
@@ -93,15 +88,15 @@ public class CreateUserTests {
                 .when()
                 .post("auth/register"));
         testRequestClient.getResponse()
-                .then().assertThat()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .and()
-                .statusCode(SC_FORBIDDEN);
+                .then()
+                .assertThat()
+                .statusCode(SC_FORBIDDEN)
+                .body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
-    @DisplayName("")
-    @Description("")
+    @DisplayName("Регистрация пользователя без имени")
+    @Description("Регистрация пользователя без имени невозможна, возвращает 403 Forbidden")
     public void userCreationWithoutNameNotPossible() {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("password", testUser.getEmail());
@@ -112,9 +107,9 @@ public class CreateUserTests {
                 .when()
                 .post("auth/register"));
         testRequestClient.getResponse()
-                .then().assertThat()
-                .body("message", equalTo("Email, password and name are required fields"))
-                .and()
-                .statusCode(SC_FORBIDDEN);
+                .then()
+                .assertThat()
+                .statusCode(SC_FORBIDDEN)
+                .body("message", equalTo("Email, password and name are required fields"));
     }
 }

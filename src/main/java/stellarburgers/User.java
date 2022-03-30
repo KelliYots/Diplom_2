@@ -1,4 +1,4 @@
-package stellar_burgers;
+package stellarburgers;
 
 import com.github.javafaker.Faker;
 import lombok.Getter;

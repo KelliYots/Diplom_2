@@ -1,12 +1,12 @@
-package stellar_burgers_tests.user_test_suite;
+package stellarburgers.tests.user.test.suite;
 
 import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import stellar_burgers.User;
-import stellar_burgers.UserRequestClient;
+import stellarburgers.User;
+import stellarburgers.UserRequestClient;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -28,7 +28,7 @@ public class ChangingUserDataTest {
     }
 
     @Test
-    @DisplayName("Changing user data with authorization")
+    @DisplayName("Изменение данных авторизованного пользователя")
     @Description("Изменение данных авторизованного пользователя, возвращает 200 ОК")
     public void changingAuthorizedUserData() {
         testRequestClient.userUniqueRegistration();
@@ -39,21 +39,19 @@ public class ChangingUserDataTest {
         testRequestClient.getResponse()
                 .then()
                 .assertThat()
-                .body("success", equalTo(true))
-                .and()
-                .statusCode(SC_OK);
+                .statusCode(SC_OK)
+                .body("success", equalTo(true));
     }
 
     @Test
-    @DisplayName("Changing user data without authorization")
+    @DisplayName("Изменение данных неавторизованного пользователя")
     @Description("Изменение данных неавторизованного пользователя, возвращает 401 Unauthorized")
     public void changingUnauthorizedUserData() {
         testRequestClient.userDataRefreshUnauthorised();
         testRequestClient.getResponse()
                 .then()
                 .assertThat()
-                .body("success", equalTo(false))
-                .and()
-                .statusCode(SC_UNAUTHORIZED);
+                .statusCode(SC_UNAUTHORIZED)
+                .body("success", equalTo(false));
     }
 }
